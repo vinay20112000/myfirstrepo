@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WildVista Zoo — Discover the Wild</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #2c3e2f;
+            background: #f9f7f2;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: #1a3c2a;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #f4c542;
+            letter-spacing: 1px;
+        }
+        .logo span { color: #fff; }
+        .logo .paw { font-size: 1.4rem; }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #e8ecd6;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: color 0.3s;
+            padding: 0.3rem 0;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-links a:hover {
+            color: #f4c542;
+            border-bottom-color: #f4c542;
+        }
+
+        .nav-cta {
+            background: #f4c542;
+            color: #1a3c2a !important;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: 25px;
+            font-weight: 700 !important;
+            transition: background 0.3s, transform 0.2s !important;
+            border-bottom: none !important;
+        }
+        .nav-cta:hover {
+            background: #e0b030 !important;
+            transform: scale(1.05);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: #f4c542;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            height: 90vh;
+            min-height: 550px;
+            background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.5)),
+                url('[images.unsplash.com](https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=1600&q=80)')
+                center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            padding: 2rem;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-shadow: 2px 3px 8px rgba(0, 0, 0, 0.6);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+        .hero-content h1 span { color: #f4c542; }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+            opacity: 0.95;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.85rem 2rem;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: #f4c542;
+            color: #1a3c2a;
+        }
+        .btn-primary:hover {
+            background: #e0b030;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 197, 66, 0.4);
+        }
+        .btn-outline {
+            border: 2px solid #fff;
+            color: #fff;
+            background: transparent;
+        }
+        .btn-outline:hover {
+            background: #fff;
+            color: #1a3c2a;
+            transform: translateY(-2px);
+        }
+
+        /* ===== SECTION COMMON ===== */
+        section {
+            padding: 5rem 5%;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1a3c2a;
+            margin-bottom: 0.5rem;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: #5a7d5a;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: #f4c542;
+            margin: 0.8rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* ===== ANIMAL CARDS ===== */
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .animal-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .animal-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+        .animal-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+        .animal-card-body {
+            padding: 1.5rem;
+        }
+        .animal-card-body h3 {
+            font-size: 1.3rem;
+            color: #1a3c2a;
+            margin-bottom: 0.3rem;
+        }
+        .animal-card-body .species {
+            color: #888;
+            font-style: italic;
+            font-size: 0.9rem;
+            margin-bottom: 0.7rem;
+        }
+        .animal-card-body p {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.5;
+        }
+        .animal-card-body .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-top: 0.8rem;
+        }
+        .badge.endangered { background: #fce4ec; color: #c62828; }
+
+        /* ===== HIGHLIGHTS BANNER ===== */
+        .highlights {
+            background: #1a3c2a;
+            color: #fff;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 2rem;
+            padding: 3.5rem 5%;
+            text-align: center;
+        }
+        .highlight-item h2 {
+            font-size: 2.5rem;
+            color: #f4c542;
+            font-weight: 800;
+        }
+        .highlight-item p {
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-top: 0.2rem;
+        }
+
+        /* ===== EXPERIENCES ===== */
+        .experiences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .exp-card {
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            height: 320px;
+            display: flex;
+            align-items: flex-end;
+        }
+        .exp-card img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            transition: transform 0.4s;
+        }
+        .exp-card:hover img { transform: scale(1.08); }
+        .exp-overlay {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 2rem 1.5rem 1.5rem;
+            color: #fff;
+            width: 100%;
+        }
+        .exp-overlay h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
+        }
+        .exp-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* ===== VISIT INFO ===== */
+        .visit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .visit-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s;
+        }
+        .visit-card:hover { transform: translateY(-5px); }
+        .visit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .visit-card h3 {
+            color: #1a3c2a;
+            margin-bottom: 0.5rem;
+        }
+        .visit-card p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* ===== NEWSLETTER ===== */
+        .newsletter {
+            background: linear-gradient(rgba(26, 60, 42, 0.92), rgba(26, 60, 42, 0.92)),
+                url('[images.unsplash.com](https://images.unsplash.com/photo-1551410224-699683e15636?w=1400&q=80)')
+                center/cover no-repeat;
+            color: #fff;
+            text-align: center;
+            padding: 4rem 5%;
+        }
+        .newsletter h2 {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+        .newsletter p {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 460px;
+            margin: 0 auto;
+        }
+        .newsletter-form input {
+            flex: 1;
+            min-width: 220px;
+            padding: 0.85rem 1.2rem;
+            border-radius: 30px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+        .newsletter-form button {
+            padding: 0.85rem 2rem;
+            border-radius: 30px;
+            border: none;
+            background: #f4c542;
+            color: #1a3c2a;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .newsletter-form button:hover {
+            background: #e0b030;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #1a3c2a;
+            color: #c8d6c0;
+            padding: 3rem 5% 1.5rem;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .footer-col h4 {
+            color: #f4c542;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+        .footer-col ul {
+            list-style: none;
+        }
+        .footer-col ul li {
+            margin-bottom: 0.4rem;
+        }
+        .footer-col ul li a {
+            color: #c8d6c0;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .footer-col ul li a:hover { color: #f4c542; }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.6rem;
+            justify-content: center;
+        }
+        .footer-social a {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            color: #f4c542;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background 0.3s;
+        }
+        .footer-social a:hover { background: rgba(244, 197, 66, 0.3); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: #1a3c2a;
+                padding: 1.5rem 5%;
+                gap: 0.8rem;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            }
+            .nav-links.active { display: flex; }
+            .hero-content h1 { font-size: 2.2rem; }
+            .hero-content p { font-size: 1rem; }
+            .section-title { font-size: 1.8rem; }
+            .highlights { gap: 1.5rem; }
+            .highlight-item h2 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== NAVIGATION ==================== -->
+    <nav>
+        <div class="logo">&#128062; Wild<span>Vista</span> Zoo</div>
+        <div class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+            <span></span><span></span><span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#animals">Animals</a></li>
+            <li><a href="#experiences">Experiences</a></li>
+            <li><a href="#visit">Plan Your Visit</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#tickets" class="nav-cta">Buy Tickets</a></li>
+        </ul>
+    </nav>
+
+    <!-- ==================== HERO ==================== -->
+    <header class="hero" id="home">
+        <div class="hero-content">
+            <h1>Where the <span>Wild</span> Comes Alive</h1>
+            <p>Explore over 200 species, immersive habitats, and unforgettable close encounters — right in the heart of nature.</p>
+            <div class="hero-buttons">
+                <a href="#tickets" class="btn btn-primary">&#127915; Get Tickets</a>
+                <a href="#animals" class="btn btn-outline">&#128269; Explore Animals</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HIGHLIGHTS BANNER ==================== -->
+    <div class="highlights">
+        <div class="highlight-item">
+            <h2>200+</h2>
+            <p>Animal Species</p>
+        </div>
+        <div class="highlight-item">
+            <h2>45</h2>
+            <p>Acres of Habitats</p>
+        </div>
+        <div class="highlight-item">
+            <h2>350K+</h2>
+            <p>Visitors / Year</p>
+        </div>
+        <div class="highlight-item">
+            <h2>12</h2>
+            <p>Daily Shows</p>
+        </div>
+    </div>
+
+    <!-- ==================== ANIMALS SECTION ==================== -->
+    <section id="animals">
+        <h2 class="section-title">Meet Our Residents</h2>
+        <p class="section-subtitle">From the African savanna to the Amazon rainforest — discover the incredible animals that call WildVista home.</p>
+
+        <div class="animals-grid">
+            <!-- Lion -->
+            <div class="animal-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?w=600&q=80)" alt="African Lion">
+                <div class="animal-card-body">
+                    <h3>African Lion</h3>
+                    <p class="species">Panthera leo</p>
+                    <p>The king of the savanna. Our pride of five lions roams a sprawling, sun-drenched enclosure designed to mimic the Serengeti grasslands.</p>
+                    <span class="badge">&#128065; Popular Exhibit</span>
+                </div>
+            </div>
+
+            <!-- Tiger -->
+            <div class="animal-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=600&q=80)" alt="Bengal Tiger">
+                <div class="animal-card-body">
+                    <h3>Bengal Tiger</h3>
+                    <p class="species">Panthera tigris tigris</p>
+                    <p>Witness the power and grace of the world's most iconic big cat in our lush, jungle-themed Tiger Trail habitat.</p>
+                    <span class="badge endangered">&#9888; Endangered</span>
+                </div>
+            </div>
+
+            <!-- Elephant -->
+            <div class="animal-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=600&q=80)" alt="African Elephant">
+                <div class="animal-card-body">
+                    <h3>African Elephant</h3>
+                    <p class="species">Loxodonta africana</p>
+                    <p>Meet our gentle giants. The Elephant Oasis features mud wallows, a waterfall, and plenty of space to roam.</p>
+                    <span class="badge">&#127754; Fan Favorite</span>
+                </div>
+            </div>
+
+            <!-- Red Panda -->
+            <div class="animal-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1602491673980-73aa8fed09ee?w=600&q=80)" alt="Red Panda">
+                <div class="animal-card-body">
+                    <h3>Red Panda</h3>
+                    <p class="species">Ailurus fulgens</p>
+                    <p>One of the most beloved animals at the zoo. Watch these agile climbers navigate their bamboo-filled haven with playful curiosity.</p>
+                    <span class="badge endangered">&#9888; Endangered</span>
+                </div>
+            </div>
+
+            <!-- Giraffe -->
+            <div class="animal-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1548506446-86b5e47e2be3?w=600&q=80)" alt="Giraffe">
+                <div class="animal-card-body">
+                    <h3>Reticulated Giraffe</h3>
+                    <p class="species">Giraffa reticulata</p>
+                    <p>Stand eye-to-eye with the tallest land animal on Earth at our elevated Giraffe Feeding Platform.</p>
+                    <span class="badge">&#129380; Feeding Available</span>
+                </div>
+            </div>
+
+            <!-- Penguin -->
+            <div class="animal-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1551986782-d0169b3f8fa7?w=600&q=80)" alt="Penguin">
+                <div class="animal-card-body">
+                    <h3>Humboldt Penguin</h3>
+                    <p class="species">Spheniscus humboldti</p>
+                    <p>Dive into the Penguin Coast — a temperature-controlled habitat with underwater viewing tunnels and daily feeding shows.</p>
+                    <span class="badge">&#127754; Daily Show</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== EXPERIENCES ==================== -->
+    <section id="experiences" style="background: #eef5ea;">
+        <h2 class="section-title">Unforgettable Experiences</h2>
+        <p class="section-subtitle">Go beyond watching — touch, feed, and connect with wildlife in ways you never imagined.</p>
+
+        <div class="experiences-grid">
+            <div class="exp-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1566486750408-b3b36e4b3be6?w=600&q=80)" alt="Giraffe feeding">
+                <div class="exp-overlay">
+                    <h3>&#129380; Giraffe Feeding</h3>
+                    <p>Hand-feed lettuce to our friendly giraffes from an elevated platform — a magical moment for all ages.</p>
+                </div>
+            </div>
+            <div class="exp-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&q=80)" alt="Behind the scenes">
+                <div class="exp-overlay">
+                    <h3>&#128083; Keeper for a Day</h3>
+                    <p>Shadow a zookeeper, prepare animal diets, and learn what it takes to care for over 200 species.</p>
+                </div>
+            </div>
+            <div class="exp-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1536683768-9d8ea8b75d7f?w=600&q=80)" alt="Night safari">
+                <div class="exp-overlay">
+                    <h3>&#127769; Twilight Safari</h3>
+                    <p>Explore the zoo after dark with guided night walks. Hear the roar of lions and the howl of wolves under the stars.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== GALLERY TEASER ==================== -->
+    <section>
+        <h2 class="section-title">Moments at the Zoo</h2>
+        <p class="section-subtitle">A glimpse of life at WildVista — captured through the eyes of our visitors and keepers.</p>
+
+        <div class="animals-grid">
+            <div class="animal-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=600&q=80)" alt="Fox">
+            </div>
+            <div class="animal-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=600&q=80)" alt="Tiger close-up">
+            </div>
+            <div class="animal-card">
+                <img src="[images.unsplash.com](https://images.unsplash.com/photo-1535332371349-a5d229f49cb5?w=600&q=80)" alt="Flamingo">
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== VISIT INFO ==================== -->
+    <section id="visit" style="background: #eef5ea;">
+        <h2 class="section-title">Plan Your Visit</h2>
+        <p class="section-subtitle">Everything you need to know for a wild day out.</p>
+
+        <div class="visit-grid">
+            <div class="visit-card">
+                <div class="visit-icon">&#9200;</div>
+                <h3>Hours</h3>
+                <p><strong>Mon – Fri:</strong> 9:00 AM – 5:00 PM</p>
+                <p><strong>Sat – Sun:</strong> 8:30 AM – 6:30 PM</p>
+                <p style="margin-top:0.4rem; font-size:0.85rem; color:#888;">Last admission 1 hour before close</p>
+            </div>
+            <div class="visit-card">
+                <div class="visit-icon">&#127915;</div>
+                <h3>Admission</h3>
+                <p><strong>Adults (13-64):</strong> $28</p>
+                <p><strong>Children (3-12):</strong> $18</p>
+                <p><strong>Seniors (65+):</strong> $22</p>
+                <p style="margin-top:0.4rem; font-size:0.85rem; color:#888;">Kids under 3 — Free!</p>
+            </div>
+            <div class="visit-card">
+                <div class="visit-icon">&#128205;</div>
+                <h3>Location</h3>
+                <p>1234 Wilderness Way</p>
+                <p>Greenfield Valley, CA 90210</p>
+                <p style="margin-top:0.4rem; font-size:0.85rem; color:#888;">Free parking on-site</p>
+            </div>
+            <div class="visit-card">
+                <div class="visit-icon">&#127860;</div>
+                <h3>Dining</h3>
+                <p><strong>Savanna Grill</strong> — Burgers &amp; more</p>
+                <p><strong>Rainforest Café</strong> — Coffee &amp; pastries</p>
+                <p style="margin-top:0.4rem; font-size:0.85rem; color:#888;">Picnic areas available</p>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:2.5rem;">
+            <a href="#" class="btn btn-primary" style="font-size:1.1rem;">&#128197; Book Your Visit Now</a>
+        </div>
+    </section>
+
+    <!-- ==================== NEWSLETTER ==================== -->
+    <div class="newsletter" id="contact">
+        <h2>&#128236; Stay Wild</h2>
+        <p>Get animal updates, special event invites, and exclusive discounts delivered straight to your inbox.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thanks for subscribing! &#128062;');">
+            <input type="email" placeholder="your@email.com" required>
+            <button type="submit">Subscribe</button>
+        </form>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>&#128062; WildVista Zoo</h4>
+                <p style="font-size:0.9rem;">Dedicated to wildlife conservation, education, and unforgettable family experiences since 1987.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#animals">Animals</a></li>
+                    <li><a href="#experiences">Experiences</a></li>
+                    <li><a href="#visit">Hours &amp; Tickets</a></li>
+                    <li><a href="#">Membership</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Donate</a></li>
+                    <li><a href="#">Adopt an Animal</a></li>
+                    <li><a href="#">Volunteer</a></li>
+                    <li><a href="#">Conservation Fund</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <p style="font-size:0.9rem;">&#128222; (555) 987-6543</p>
+                <p style="font-size:0.9rem;">&#9993; hello@wildvistazoo.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 WildVista Zoo. All rights reserved.</p>
+            <div class="footer-social">
+                <a href="#" title="Facebook">f</a>
+                <a href="#" title="Instagram">&#10084;</a>
+                <a href="#" title="YouTube">&#9654;</a>
+                <a href="#" title="Twitter/X">&#120143;</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
